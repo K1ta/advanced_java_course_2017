@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Properties;
 
+import edu.technopolis.advanced.boatswain.timetable.handler.Handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,6 +127,7 @@ public class BoatswainBot {
         private final String phrase;
         private final String joke;
         private final String sendEndpoint;
+        Handler handler = new Handler();
 
         MessageSender(ApiClient okClient, Properties props) {
             this.client = okClient;
@@ -151,7 +153,7 @@ public class BoatswainBot {
                     .setPayload(
                             new SendMessagePayload(
                                     new SendRecipient(notif.getSender().getUserId()),
-                                    new Message(joke)
+                                    handler.handle(notif.getMessage(), notif.getSender().getUserId())
                             )
                     );
             try {
