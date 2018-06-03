@@ -1,5 +1,5 @@
 plugins {
-    id 'advancedjava'
+    id 'java'
 }
 
 group 'edu.technopolis.advancedjava'
