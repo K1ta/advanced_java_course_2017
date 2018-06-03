@@ -3,7 +3,7 @@ package edu.technopolis.advancedjava;
 public class Deadlock {
     private static final Object FIRST_LOCK = new Object();
     private static final Object SECOND_LOCK = new Object();
-    private static final Object t = new Object();
+    private static final Object THIRD_LOCK = new Object();
     static int state = 0;
 
     public static void main(String[] args) throws Exception {
@@ -17,19 +17,9 @@ public class Deadlock {
     }
 
     private static void first() {
-        synchronized(FIRST_LOCK) {
-            synchronized (t) {
-                state++;
-                while(state < 2) {
-                    try {
-                        t.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                t.notifyAll();
-            }
-            synchronized(SECOND_LOCK) {
+        synchronized (FIRST_LOCK) {
+            deadlock();
+            synchronized (SECOND_LOCK) {
                 //unreachable point
             }
         }
@@ -42,23 +32,26 @@ public class Deadlock {
             //
         }
         //reverse order of monitors
-        synchronized(SECOND_LOCK) {
-            synchronized (t) {
-                state++;
-                while(state < 2) {
-                    try {
-                        t.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                t.notifyAll();
-            }
-            synchronized(FIRST_LOCK) {
+        synchronized (SECOND_LOCK) {
+            deadlock();
+            synchronized (FIRST_LOCK) {
                 //unreachable point
             }
         }
+    }
 
+    private static void deadlock() {
+        synchronized (THIRD_LOCK) {
+            state++;
+            while (state < 2) {
+                try {
+                    THIRD_LOCK.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            THIRD_LOCK.notifyAll();
+        }
     }
 
 }
